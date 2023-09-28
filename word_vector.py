@@ -79,8 +79,7 @@ corpus = df_train["text_clean"]
 vectorizer.fit(corpus)
 X_train = vectorizer.transform(corpus)
 
-# sns.heatmap(X_train.todense()[:, np.random.randint(0, X_train.shape[1], 100)]
-#             == 0, vmin=0, vmax=1, cbar=False).set_title('Sparse Matrix Sample')
+sns.heatmap(X_train.todense()[:, np.random.randint(0, X_train.shape[1], 100)]==0, vmin=0, vmax=1, cbar=False).set_title('Sparse Matrix Sample')
 
 # top 10 words in engr and humi
 X_engr = X_train[np.where(y_train == 0)]
@@ -114,19 +113,19 @@ Logistic Regression
 from sklearn.linear_model import LogisticRegression
 classifier3 = LogisticRegression(random_state=0).fit(X_train, y_train)
 
-## pipeline
+# pipeline
 model1 = pipeline.Pipeline([("vectorizer", vectorizer),  
                            ("classifier", classifier1)])
 model2 = pipeline.Pipeline([("vectorizer", vectorizer),  
                            ("classifier", classifier2)])
 model3 = pipeline.Pipeline([("vectorizer", vectorizer),  
                            ("classifier", classifier3)])
-## train classifier
+# train classifier
 model1["classifier"].fit(X_train, y_train)
 model2["classifier"].fit(X_train, y_train)
 model3["classifier"].fit(X_train, y_train)
 
-## test
+# test
 X_test = df_test["text_clean"].values
 score1 = model1.score(X_test, y_test)
 score2 = model2.score(X_test, y_test)
@@ -159,7 +158,7 @@ y_engr_words3 =sorted(y_engr_words3, key = lambda x: x[1], reverse=True)
 df6 = pd.DataFrame(y_engr_words3[:30], columns = ['Word', 'Logistic Regression'])
 df6.plot.bar(x='Word',y='Logistic Regression', color='#3ae4c5')
 
-#find the class that is most and least confident
+# find the class that is most and least confident
 pred_prob=model3.predict_proba(df["text_clean"])
 y_engr_words4 = [(df["Subject"][i]+str(df["Course Number"][i].item()), pred_prob[i,0]) for i in range(df["Subject"].size)]
 y_engr_words4 =sorted(y_engr_words4, key = lambda x: x[1], reverse=True)
@@ -176,7 +175,7 @@ df10 = pd.DataFrame(y_humi_words4[-30:], columns = ['Word', 'Humanity Least Conf
 df10.plot.bar(x='Word',y='Humanity Least Confident', color='#9566ea')
 
 
-#confidence curve
+# confidence curve
 pred_prob=model3.predict_proba(df["text_clean"])
 df0 = pd.DataFrame({'Engineering':sorted(pred_prob[:,0]),'Humanity':sorted(pred_prob[:,1])})
 df0['Engineering'] = df0['Engineering'].astype(float)
